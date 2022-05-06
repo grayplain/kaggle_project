@@ -1,7 +1,7 @@
+import pandas
 import pandas as pd
 import numpy as np
 import os
-from sklearn.ensemble import RandomForestClassifier
 
 
 # 提出ファイル作成
@@ -13,8 +13,15 @@ def output_submit(test_data, estimator):
 
 def read_pd_data(file_name, header="infer"):
     file_name_path = '/' + file_name
+    # return pd.read_csv(os.getcwd() + '/datas/' + file_name_path, header=header, na_filter=False)
     return pd.read_csv(os.getcwd() + '/datas/' + file_name_path, header=header)
 
 
-def main():
-    print()
+def to_dummies(pd_data: pandas.DataFrame):
+    return pandas.get_dummies(pd_data, dummy_na=True)
+
+
+def output_submit(predict_value: np.ndarray):
+    sample_submit = read_pd_data('sample_submission.csv')
+    sample_submit['SalePrice'] = predict_value
+    sample_submit.to_csv('submit_house_price.csv', header=True, sep=',', index=False)
