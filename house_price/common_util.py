@@ -1,4 +1,3 @@
-import pandas
 import pandas as pd
 import numpy as np
 import os
@@ -13,12 +12,8 @@ def output_submit(test_data, estimator):
 
 def read_pd_data(file_name, header="infer"):
     file_name_path = '/' + file_name
-    # return pd.read_csv(os.getcwd() + '/datas/' + file_name_path, header=header, na_filter=False)
-    return pd.read_csv(os.getcwd() + '/datas/' + file_name_path, header=header)
-
-
-def to_dummies(pd_data: pandas.DataFrame):
-    return pandas.get_dummies(pd_data, dummy_na=True)
+    return pd.read_csv(os.getcwd() + '/datas/' + file_name_path, header=header, na_filter=False)
+    # return pd.read_csv(os.getcwd() + '/datas/' + file_name_path, header=header)
 
 
 def output_submit(predict_value: np.ndarray):
