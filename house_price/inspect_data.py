@@ -1,39 +1,46 @@
 import common_util
 import pandas as pd
-# import seaborn as sns
-# import matplotlib.pyplot as plt
+import feature_engineering
 import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
 
 def main_method():
     pd.set_option('display.max_rows', 500)
+    pd.set_option('display.max_columns', 70)
 
     train_house_price_pd = common_util.read_pd_data("train.csv")
-    train_house_price_pd = train_house_price_pd.drop('Id', axis=1)
+    train_house_price_pd = train_house_price_pd.drop('SalePrice', axis=1)
+    train_house_price_pd = feature_engineering.execute_feature_engineering(train_house_price_pd)
 
-    target_column_name = 'SaleCondition'
+    test_house_price_pd = common_util.read_pd_data("test.csv")
+    target_pd = feature_engineering.execute_feature_engineering(test_house_price_pd)
 
-    filtered_price_pd = train_house_price_pd.loc[:, ['SalePrice', target_column_name]]
+    target_pd = feature_engineering.supplement_column_to_test(target_pd)
 
-    # exist_pool_pd = filtered_price_pd.query('PoolQC == PoolQC')
-    x_dummied_pd = common_util.to_numeric_dummies(filtered_price_pd, [target_column_name])
 
-    # print(filtered_price_pd.corr())
-    print(x_dummied_pd.corr())
+    # print(train_house_price_pd)
+    aaa = target_pd.columns.values
+    bbb = train_house_price_pd.columns.values
 
-    # x_dummied_pd = common_util.to_dummies(train_house_price_pd).fillna(0)
+    aaa_bbb = np.setdiff1d(aaa, bbb)
+    bbb_aaa = np.setdiff1d(bbb, aaa)
 
+    print(aaa_bbb)
+    print(bbb_aaa)
 
 main_method()
 
 
 
-# def seaborn_test():
-#     train_house_price_pd = common_util.read_pd_data("train.csv")
-#
-#     house_price_corr = train_house_price_pd.corr()
-#     fig, ax = plt.subplots(figsize=(12, 9))
-#     sns.heatmap(house_price_corr, square=True, vmax=1, vmin=-1, center=0)
-#
-#     plt.show()
+def seaborn_test():
+    train_house_price_pd = common_util.read_pd_data("train.csv")
+    train_house_price_pd = train_house_price_pd[train_house_price_pd['SalePrice'] <= 200000]
+
+    house_price_corr = train_house_price_pd.corr()
+    fig, ax = plt.subplots(figsize=(12, 9))
+    sns.heatmap(house_price_corr, square=True, vmax=1, vmin=-1, center=0)
+
+    plt.show()
 
 # seaborn_test()

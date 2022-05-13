@@ -12,8 +12,8 @@ def output_submit(test_data, estimator):
 
 def read_pd_data(file_name, header="infer"):
     file_name_path = '/' + file_name
-    return pd.read_csv(os.getcwd() + '/datas/' + file_name_path, header=header, na_filter=False)
-    # return pd.read_csv(os.getcwd() + '/datas/' + file_name_path, header=header)
+    # return pd.read_csv(os.getcwd() + '/datas/' + file_name_path, header=header, na_filter=False)
+    return pd.read_csv(os.getcwd() + '/datas/' + file_name_path, header=header)
 
 
 def output_submit(predict_value: np.ndarray):
