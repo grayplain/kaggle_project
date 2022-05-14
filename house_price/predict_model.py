@@ -30,7 +30,8 @@ def fit_model(x_train: np.ndarray, y_train: np.ndarray):
     kf = KFold(5, shuffle=True, random_state=42).get_n_splits(x_train)
     rmse = np.sqrt(-cross_val_score(model, x_train, y_train, scoring="neg_mean_squared_log_error", cv=kf))
 
-    print("\nscore: {:.4f} ({:.4f})\n".format(rmse.mean(), rmse.std()))
+    print("\n各スコア: {})".format(rmse))
+    print("\n平均スコア: {:.4f} ({:.4f})\n".format(rmse.mean(), rmse.std()))
 
     fitted_model = model.fit(x_train, y_train)
     return fitted_model
@@ -53,13 +54,14 @@ def main_method():
     y_pd = house_price_pd['SalePrice']
 
     x_pd = feature_engineering.execute_feature_engineering(x_pd)
-    x_pd = feature_engineering.extract_pd_data(x_pd)
+    # x_pd = feature_engineering.extract_pd_data(x_pd)
 
     fitted_model = fit_model(x_train=x_pd.to_numpy(), y_train=y_pd.to_numpy())
+    return
 
     test_house_price_pd = common_util.read_pd_data("test.csv")
     target_pd = feature_engineering.execute_feature_engineering(test_house_price_pd)
-    target_pd = feature_engineering.extract_pd_data(target_pd)
+    # target_pd = feature_engineering.extract_pd_data(target_pd)
 
     result_value = predict_model(fitted_model, RobustScaler().fit_transform(target_pd.to_numpy()))
     common_util.output_submit(result_value)

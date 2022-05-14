@@ -5,27 +5,32 @@ import pandas as pd
 def delete_feature_engineering(pd_data: pd.DataFrame):
     # 0.1 未満
     pd_data = pd_data.drop('Id', axis=1)
-    pd_data = pd_data.drop('YrSold', axis=1)
-    pd_data = pd_data.drop('MoSold', axis=1)
+    pd_data = pd_data.drop('Utilities', axis=1)
+
     pd_data = pd_data.drop('MiscVal', axis=1)
     pd_data = pd_data.drop('PoolArea', axis=1)
     pd_data = pd_data.drop('PoolQC', axis=1)
     pd_data = pd_data.drop('Street', axis=1)
-    pd_data = pd_data.drop('Utilities', axis=1)
     pd_data = pd_data.drop('LandSlope', axis=1)
     pd_data = pd_data.drop('Condition2', axis=1)
     pd_data = pd_data.drop('HouseStyle', axis=1)
     pd_data = pd_data.drop('Heating', axis=1)
     pd_data = pd_data.drop('MiscFeature', axis=1)
 
+    # 全体の10% 以上欠損値があり、各カテゴリが住宅価格と相関係数が0.1 未満の場合、消す
+    pd_data = pd_data.drop('LotFrontage', axis=1)
+    pd_data = pd_data.drop('FireplaceQu', axis=1)
+    pd_data = pd_data.drop('Fence', axis=1)
+    pd_data = pd_data.drop('Alley', axis=1)
+
     # 0.1ちょっと
-    pd_data = pd_data.drop('LandContour', axis=1)
-    pd_data = pd_data.drop('LotConfig', axis=1)
-    pd_data = pd_data.drop('Condition1', axis=1)
-    pd_data = pd_data.drop('BldgType', axis=1)
-    pd_data = pd_data.drop('RoofMatl', axis=1)
-    pd_data = pd_data.drop('BsmtCond', axis=1)
-    pd_data = pd_data.drop('Functional', axis=1)
+    # pd_data = pd_data.drop('LandContour', axis=1)
+    # pd_data = pd_data.drop('LotConfig', axis=1)
+    # pd_data = pd_data.drop('Condition1', axis=1)
+    # pd_data = pd_data.drop('BldgType', axis=1)
+    # pd_data = pd_data.drop('RoofMatl', axis=1)
+    # pd_data = pd_data.drop('BsmtCond', axis=1)
+    # pd_data = pd_data.drop('Functional', axis=1)
 
     return pd_data
 
@@ -41,12 +46,14 @@ def to_dummies(pd_data: pd.DataFrame):
 
 def to_numeric_dummies(pd_data: pd.DataFrame, target_column: list):
     # return pandas.get_dummies(pd_data, dummy_na=True, drop_first=True)
-    return pd.get_dummies(pd_data, dummy_na=True, columns=target_column)
+    return pd.get_dummies(pd_data, dummy_na=False, columns=target_column)
+    # return pd.get_dummies(pd_data, dummy_na=True, columns=target_column)
 
 def fill_na_features(pd_data: pd.DataFrame):
     result_pd = to_numeric_dummies(pd_data, ['MSSubClass'])
     result_pd = to_numeric_dummies(result_pd, ['YearBuilt'])
     result_pd = to_numeric_dummies(result_pd, ['YearRemodAdd'])
+    result_pd = to_numeric_dummies(result_pd, ['YrSold', 'MoSold'])
     result_pd = fill_na_value(result_pd, 'LotFrontage')
     result_pd = fill_na_value(result_pd, 'LotArea')
     result_pd = fill_na_value(result_pd, 'MasVnrArea')
@@ -94,6 +101,7 @@ def supplement_column_to_test(pd_data: pd.DataFrame):
     return pd_data
 
 
+# 推定器が重要だと判断して特徴量だけを抜き出したバージョンだが、正直あかんかった。
 def extract_pd_data(pd_data: pd.DataFrame):
     result_pd = pd.DataFrame(data={'LotArea': pd_data['LotArea'],
                        'OverallQual': pd_data['OverallQual'],
@@ -105,5 +113,13 @@ def extract_pd_data(pd_data: pd.DataFrame):
                        'FullBath': pd_data['FullBath'],
                        'GarageCars': pd_data['GarageCars'],
                        'BsmtQual_Ex': pd_data['BsmtQual_Ex']})
+
+    return result_pd
+
+
+def extract_ym_pd_data(pd_data: pd.DataFrame):
+    result_pd = pd.DataFrame(data={'YrSold': pd_data['YrSold'],
+                       'MoSold': pd_data['MoSold'],
+                       'SalePrice': pd_data['SalePrice']})
 
     return  result_pd
