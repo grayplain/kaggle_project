@@ -9,10 +9,22 @@ def main_method():
     pd.set_option('display.max_rows', 500)
     pd.set_option('display.max_columns', 70)
 
-    train_house_price_pd = common_util.read_pd_data("train.csv")
+    house_price_pd = common_util.read_pd_data("train.csv")
+    house_price_pd = feature_engineering.drop_outliers(house_price_pd)
 
-    print(train_house_price_pd.isnull().sum().sort_values())
-    # train_house_price_pd = train_house_price_pd.drop('SalePrice', axis=1)
+    x_pd = house_price_pd.drop('SalePrice', axis=1)
+    x_pd = feature_engineering.execute_feature_engineering(x_pd)
+
+    test_house_price_pd = common_util.read_pd_data("test.csv")
+    target_pd = feature_engineering.execute_feature_engineering(test_house_price_pd)
+    target_pd = feature_engineering.supplement_column_to_test(target_pd)
+
+    aaa = x_pd.columns.values
+    bbb = target_pd.columns.values
+    aaa_bbb = np.setdiff1d(aaa, bbb)
+    bbb_aaa = np.setdiff1d(bbb, aaa)
+    print(aaa_bbb)
+    print(bbb_aaa)
 
 main_method()
 

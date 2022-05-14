@@ -18,10 +18,10 @@ def delete_feature_engineering(pd_data: pd.DataFrame):
     pd_data = pd_data.drop('MiscFeature', axis=1)
 
     # 全体の10% 以上欠損値があり、各カテゴリが住宅価格と相関係数が0.1 未満の場合、消す
-    pd_data = pd_data.drop('LotFrontage', axis=1)
-    pd_data = pd_data.drop('FireplaceQu', axis=1)
-    pd_data = pd_data.drop('Fence', axis=1)
-    pd_data = pd_data.drop('Alley', axis=1)
+    # pd_data = pd_data.drop('LotFrontage', axis=1)
+    # pd_data = pd_data.drop('FireplaceQu', axis=1)
+    # pd_data = pd_data.drop('Fence', axis=1)
+    # pd_data = pd_data.drop('Alley', axis=1)
 
     # 0.1ちょっと
     # pd_data = pd_data.drop('LandContour', axis=1)
@@ -92,7 +92,7 @@ def drop_outliers(train_pd_data: pd.DataFrame):
     return result_pd
 
 def supplement_column_to_test(pd_data: pd.DataFrame):
-    pd_data = pd_data.drop('MSSubClass_150.0', axis=1)
+    # pd_data = pd_data.drop('MSSubClass_150.0', axis=1)
     pd_data['Electrical_Mix'] = 0
     pd_data['Exterior1st_ImStucc'] = 0
     pd_data['Exterior1st_Stone'] = 0

@@ -2,6 +2,7 @@ import common_util
 import numpy as np
 import pandas as pd
 from sklearn.ensemble import RandomForestRegressor
+from sklearn.linear_model import Ridge
 from sklearn.ensemble import GradientBoostingRegressor
 from sklearn.metrics import mean_squared_log_error
 from sklearn.preprocessing import RobustScaler
@@ -24,8 +25,13 @@ def rmse_score(y_true, y_pred):
     return rmse
 
 def fit_model(x_train: np.ndarray, y_train: np.ndarray):
-    # model = pipe_model(GradientBoostingRegressor())
-    model = GradientBoostingRegressor()
+    estimator = GradientBoostingRegressor(n_estimators=3000, learning_rate=0.05,
+                                   max_depth=4, max_features='sqrt',
+                                   min_samples_leaf=15, min_samples_split=10,
+                                   loss='huber', random_state=5)
+
+    estimator = Ridge(alpha=50.0)
+    model = pipe_model(estimator)
 
     kf = KFold(5, shuffle=True, random_state=42).get_n_splits(x_train)
     rmse = np.sqrt(-cross_val_score(model, x_train, y_train, scoring="neg_mean_squared_log_error", cv=kf))
@@ -47,21 +53,19 @@ def predict_model(fitted_model, x_test: np.ndarray):
 
 def main_method():
     house_price_pd = common_util.read_pd_data("train.csv")
-
     house_price_pd = feature_engineering.drop_outliers(house_price_pd)
 
     x_pd = house_price_pd.drop('SalePrice', axis=1)
     y_pd = house_price_pd['SalePrice']
-
     x_pd = feature_engineering.execute_feature_engineering(x_pd)
-    # x_pd = feature_engineering.extract_pd_data(x_pd)
 
     fitted_model = fit_model(x_train=x_pd.to_numpy(), y_train=y_pd.to_numpy())
+
     return
 
     test_house_price_pd = common_util.read_pd_data("test.csv")
     target_pd = feature_engineering.execute_feature_engineering(test_house_price_pd)
-    # target_pd = feature_engineering.extract_pd_data(target_pd)
+    target_pd = feature_engineering.supplement_column_to_test(target_pd)
 
     result_value = predict_model(fitted_model, RobustScaler().fit_transform(target_pd.to_numpy()))
     common_util.output_submit(result_value)
