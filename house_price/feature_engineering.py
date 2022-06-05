@@ -1,6 +1,7 @@
 import math
 import string
 import pandas as pd
+import numpy as np
 
 def delete_feature_engineering(pd_data: pd.DataFrame):
     # 0.1 未満
@@ -91,15 +92,6 @@ def drop_outliers(train_pd_data: pd.DataFrame):
     result_pd = result_pd.drop(result_pd[result_pd['Id'] == 1298].index)
     return result_pd
 
-def supplement_column_to_test(pd_data: pd.DataFrame):
-    # pd_data = pd_data.drop('MSSubClass_150.0', axis=1)
-    pd_data['Electrical_Mix'] = 0
-    pd_data['Exterior1st_ImStucc'] = 0
-    pd_data['Exterior1st_Stone'] = 0
-    pd_data['Exterior2nd_Other'] = 0
-    pd_data['GarageQual_Ex'] = 0
-    return pd_data
-
 
 # 推定器が重要だと判断して特徴量だけを抜き出したバージョンだが、正直あかんかった。
 def extract_pd_data(pd_data: pd.DataFrame):
@@ -123,3 +115,13 @@ def extract_ym_pd_data(pd_data: pd.DataFrame):
                        'SalePrice': pd_data['SalePrice']})
 
     return  result_pd
+
+
+def fill_in_categories(pd_data_1: pd.DataFrame, pd_data_2: pd.DataFrame):
+    for feature_name in ['YearBuilt', 'RoofMatl', 'Electrical', 'Exterior1st', 'Exterior2nd', 'GarageQual', 'MSSubClass']:
+        categories = set(pd_data_1[feature_name].unique().tolist() + pd_data_1[feature_name].unique().tolist())
+        categories.discard(np.nan)
+        pd_data_1[feature_name] = pd.Categorical(pd_data_1[feature_name], categories=categories)
+        pd_data_2[feature_name] = pd.Categorical(pd_data_2[feature_name], categories=categories)
+
+    return pd_data_1, pd_data_2
