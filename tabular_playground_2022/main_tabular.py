@@ -8,10 +8,7 @@ from sklearn.svm import SVR
 from sklearn.metrics import mean_squared_error
 
 def main_tabular():
-
-    common_util.output_sample_pd_data(common_util.read_pd_data('data.csv'))
-
-    data_set_pd_data = common_util.read_pd_data('datas/random_sampling_tablular.csv')
+    data_set_pd_data = common_util.read_pd_data('random_sampling_tablular.csv')
     submit_pd = common_util.read_pd_data('head_3000_submission.csv')
     # data_set_pd_data = common_util.read_pd_data('data.csv')
     # submit_pd = common_util.read_pd_data('sample_submission.csv')
@@ -20,6 +17,10 @@ def main_tabular():
     targets = data_set_pd_data.drop(['row_id'], axis=1).columns.values
     for target_name in targets:
         print('target_name={}、start.'.format(target_name))
+
+        if data_set_pd_data[data_set_pd_data[target_name].isnull()].count(axis=1).size <= 0:
+            print('target_name={}、not exist.'.format(target_name))
+            continue
 
         train_X, test_X, train_y, test_y = generate_target_data_set(data_set_pd_data,
                                                                     target_name=target_name,
