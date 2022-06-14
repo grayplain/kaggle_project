@@ -10,7 +10,9 @@ from sklearn.metrics import mean_squared_error
 def main_tabular():
     sample_pd_data = common_util.read_pd_data('random_sampling_tablular.csv')
     primary_pd = common_util.read_pd_data('head_3000_submission.csv')
-    use_train=False
+    use_train=True
+
+    targets = sample_pd_data.drop(['Unnamed: 0', 'row_id'], axis=1).columns.values
 
     target_name = 'F_1_0'
     train_X, test_X, train_y, test_y = generate_target_data_set(sample_pd_data, target_name=target_name, use_train=use_train)
@@ -21,15 +23,17 @@ def main_tabular():
     target_row = target_index + target_row_name
 
     model = Ridge()
-    model.fit(train_X, train_y)
-    pred_y = model.predict(test_X)
+    model.fit(np.delete(train_X, [0, 1], axis=1), train_y)
+    pred_y = model.predict(np.delete(test_X, [0, 1], axis=1))
+    # model.fit(train_X, train_y)
+    # pred_y = model.predict(test_X)
 
     if use_train:
         rmse = np.sqrt(mean_squared_error(test_y, pred_y))
         print(rmse)
-
-    pred_pd = pd.DataFrame(data={'row-col': target_row, 'value': pred_y})
-    merge_pd_data(primary_pd, pred_pd)
+    else:
+        pred_pd = pd.DataFrame(data={'row-col': target_row, 'value': pred_y})
+        merge_pd_data(primary_pd, pred_pd)
 
     print("end.")
 
