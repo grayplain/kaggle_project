@@ -19,10 +19,8 @@ def read_pd_data(file_name, header="infer", nrows=None):
     return pd.read_csv(os.getcwd() + '/datas/' + file_name_path, header=header, nrows=nrows)
 
 
-def output_submit(predict_value: np.ndarray):
-    sample_submit = read_pd_data('sample_submission.csv')
-    sample_submit['SalePrice'] = predict_value
-    sample_submit.to_csv('submit_tabular.csv', header=True, sep=',', index=False)
+def output_submit(predict_pd_data: pd.DataFrame):
+    predict_pd_data.to_csv('submit_tabular.csv', header=True, sep=',', index=False)
 
 def output_sample_pd_data(pd_data: pd.DataFrame):
     sample_pd_data = pd_data.sample(n=2000)

@@ -44,7 +44,7 @@ def main_tabular():
             pred_pd = pd.DataFrame(data={'row-col': target_row, 'value': pred_y})
             primary_pd = merge_pd_data(primary_pd, pred_pd)
 
- 
+    common_util.output_submit(primary_pd)
     print("end.")
 
 #
