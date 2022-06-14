@@ -10,31 +10,41 @@ from sklearn.metrics import mean_squared_error
 def main_tabular():
     sample_pd_data = common_util.read_pd_data('random_sampling_tablular.csv')
     primary_pd = common_util.read_pd_data('head_3000_submission.csv')
-    use_train=True
+    use_train=False
 
     targets = sample_pd_data.drop(['Unnamed: 0', 'row_id'], axis=1).columns.values
 
-    target_name = 'F_1_0'
-    train_X, test_X, train_y, test_y = generate_target_data_set(sample_pd_data, target_name=target_name, use_train=use_train)
+    count=0
+    for target_name in targets:
+        print('target_name={}、start.'.format(target_name))
+        count += 1
+        if count > 5:
+            continue
 
-    # 目的変数のインデックス番号
-    target_index = np.array(np.array(test_X[:, 0], dtype=int), dtype=str)
-    target_row_name = np.array(np.full(target_index.size, '-'+target_name), dtype=object)
-    target_row = target_index + target_row_name
+        train_X, test_X, train_y, test_y = generate_target_data_set(sample_pd_data,
+                                                                    target_name=target_name,
+                                                                    use_train=use_train)
 
-    model = Ridge()
-    model.fit(np.delete(train_X, [0, 1], axis=1), train_y)
-    pred_y = model.predict(np.delete(test_X, [0, 1], axis=1))
-    # model.fit(train_X, train_y)
-    # pred_y = model.predict(test_X)
+        # 目的変数のインデックス番号
+        target_index = np.array(np.array(test_X[:, 0], dtype=int), dtype=str)
+        target_row_name = np.array(np.full(target_index.size, '-' + target_name), dtype=object)
+        target_row = target_index + target_row_name
 
-    if use_train:
-        rmse = np.sqrt(mean_squared_error(test_y, pred_y))
-        print(rmse)
-    else:
-        pred_pd = pd.DataFrame(data={'row-col': target_row, 'value': pred_y})
-        merge_pd_data(primary_pd, pred_pd)
+        model = Ridge()
+        model.fit(np.delete(train_X, [0, 1], axis=1), train_y)
+        pred_y = model.predict(np.delete(test_X, [0, 1], axis=1))
+        # model.fit(train_X, train_y)
+        # pred_y = model.predict(test_X)
 
+        if use_train:
+            rmse = np.sqrt(mean_squared_error(test_y, pred_y))
+            print('target_name={}, rmse={}'.format(target_name, rmse))
+        else:
+            print('target_name={}、done'.format(target_name))
+            pred_pd = pd.DataFrame(data={'row-col': target_row, 'value': pred_y})
+            primary_pd = merge_pd_data(primary_pd, pred_pd)
+
+ 
     print("end.")
 
 #
