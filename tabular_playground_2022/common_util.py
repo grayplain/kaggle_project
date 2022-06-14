@@ -24,5 +24,5 @@ def output_submit(predict_pd_data: pd.DataFrame):
 
 def output_sample_pd_data(pd_data: pd.DataFrame):
     sample_pd_data = pd_data.sample(n=2000)
-    sample_pd_data.to_csv('random_sampling_tablular.csv', header=True, sep=',')
+    sample_pd_data.to_csv('random_sampling_tablular.csv', header=True, sep=',', index=False)
 
