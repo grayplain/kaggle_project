@@ -10,8 +10,9 @@ from sklearn.metrics import mean_squared_error
 def main_tabular():
     data_set_pd_data = common_util.read_pd_data('random_sampling_tablular.csv')
     submit_pd = common_util.read_pd_data('head_3000_submission.csv')
-    # data_set_pd_data = common_util.read_pd_data('data.csv')
-    # submit_pd = common_util.read_pd_data('sample_submission.csv')
+    data_set_pd_data = common_util.read_pd_data('data.csv')
+    submit_pd = common_util.read_pd_data('sample_submission.csv')
+    submit_pd['index'] = submit_pd.index
     use_train=False
 
     targets = data_set_pd_data.drop(['row_id'], axis=1).columns.values
@@ -45,14 +46,22 @@ def main_tabular():
             pred_pd = pd.DataFrame(data={'row-col': target_row, 'value': pred_y})
             submit_pd = merge_pd_data(submit_pd, pred_pd)
 
+    submit_pd = trim_index_pd_data(submit_pd)
     common_util.output_submit(submit_pd)
     print("end.")
 
+def trim_index_pd_data(pd_data: pd.DataFrame, column_name='index'):
+    ret_value = pd_data.sort_values(column_name)
+    ret_value = ret_value.drop(column_name, axis=1)
+    return ret_value
+
 #
 def merge_pd_data(primary_pd: pd.DataFrame, pred_pd: pd.DataFrame):
-    result_pd = pd.concat([primary_pd, pred_pd]).groupby('row-col').last().reset_index()
+    result_pd2 = pd.concat([primary_pd, pred_pd]).groupby('row-col', as_index=False).last()
+
+    # result_pd = pd.concat([primary_pd, pred_pd]).groupby('row-col').last().reset_index()
     # print(result_pd[result_pd['row-col'] == '21-F_1_0'])
-    return result_pd
+    return result_pd2
 
 
 # 指定した特徴量を目的変数にして返却する。
