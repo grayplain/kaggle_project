@@ -15,11 +15,3 @@ class inspect_data:
 
     def use_test(self):
         print(self.huga)
-
-print("this.")
-
-ins = inspect_data()
-# ins = inspect_data("kon!")
-ins.hello("test method.")
-# ins.assign_test(10)
-ins.use_test()
